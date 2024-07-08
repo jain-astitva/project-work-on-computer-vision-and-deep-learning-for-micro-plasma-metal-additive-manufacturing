@@ -1,0 +1,82 @@
+import cv2
+import numpy as np
+
+# Global variables
+dragging = False
+start_x, start_y = -1, -1
+end_x, end_y = -1, -1
+conversion_factor = None
+
+
+def mouse_callback(event, x, y, flags, param):
+    global dragging, start_x, start_y, end_x, end_y, conversion_factor
+
+    if event == cv2.EVENT_LBUTTONDOWN:
+        # Start dragging to draw rectangle
+        dragging = True
+        start_x, start_y = x, y
+        end_x, end_y = x, y
+
+    elif event == cv2.EVENT_MOUSEMOVE:
+        if dragging:
+            # Update end coordinates while dragging
+            end_x, end_y = x, y
+
+    elif event == cv2.EVENT_LBUTTONUP:
+        # Stop dragging
+        dragging = False
+
+        # Compute dimensions of the rectangle (width and height)
+        width = abs(end_x - start_x)
+        height = abs(end_y - start_y)
+
+        if conversion_factor is None:
+            # Ask user for the real-world dimensions of the first rectangle
+            real_width_cm = float(input("Enter the real width of the first rectangle in cm: "))
+            real_height_cm = float(input("Enter the real height of the first rectangle in cm: "))
+            conversion_factor = (real_width_cm / width, real_height_cm / height)
+
+            # Output dimensions in pixels and cm
+            print(f"First rectangle dimensions: Width= {width} pixels, Height= {height} pixels")
+            print(f"First rectangle dimensions: Width= {real_width_cm} cm, Height= {real_height_cm} cm")
+        else:
+            # Convert pixels to cm using the conversion factor
+            width_cm = width * conversion_factor[0]
+            height_cm = height * conversion_factor[1]
+
+            # Output dimensions in pixels and cm
+            print(f"Rectangle dimensions: Width= {width} pixels, Height= {height} pixels")
+            print(f"Rectangle dimensions: Width= {width_cm:.2f} cm, Height= {height_cm:.2f} cm")
+
+
+def main():
+    # Read an image
+    image = cv2.imread('ti5.jpg')
+    if image is None:
+        print("Error: Could not read the image.")
+        return
+
+    # Create a window and bind the mouse callback function
+    cv2.namedWindow('Drag to Draw Rectangle')
+    cv2.setMouseCallback('Drag to Draw Rectangle', mouse_callback)
+
+    while True:
+        # Draw the image with rectangle (if dragging)
+        image_copy = image.copy()
+        if dragging:
+            cv2.rectangle(image_copy, (start_x, start_y), (end_x, end_y), (0, 255, 0), 2)
+
+        # Display the result
+        cv2.imshow('Drag to Draw Rectangle', image_copy)
+
+        # Check for key press (ESC to exit)
+        key = cv2.waitKey(1) & 0xFF
+        if key == 27:  # ESC key
+            break
+
+    # Close all windows
+    cv2.destroyAllWindows()
+
+
+if __name__ == "__main__":
+    main()
