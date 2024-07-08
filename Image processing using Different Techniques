@@ -1,0 +1,32 @@
+import cv2
+import numpy as np
+from matplotlib import pyplot as plt
+
+img=cv2.imread('82.png',0)
+_ , mask= cv2.threshold(img,100h,255,cv2.THRESH_BINARY_INV)
+
+# we dont need to define mask if image is already  a  binary  image
+kernel =np.ones((2,2), np.uint8)
+dilation=cv2.dilate(mask , kernel, iterations=2)
+erosion = cv2.erode(mask, kernel , iterations=1)
+opening = cv2.morphologyEx(mask,cv2.MORPH_OPEN,kernel)
+# opening is erosion followed by dilation
+closing = cv2.morphologyEx(mask,cv2.MORPH_CLOSE,kernel)
+# dilation then erosion in closing
+mg = cv2.morphologyEx(mask,cv2.MORPH_GRADIENT,kernel)
+# diffrence btw dilation and erosion
+th = cv2.morphologyEx(mask,cv2.MORPH_TOPHAT,kernel)
+# input and opening ka diffrence
+
+
+
+
+titles=['image','mask','dilation', 'erosion' ,'opening','closing','mg','th']
+images=[img , mask , dilation , erosion , opening, closing,mg,th]
+
+for i in range (8):
+    plt.subplot(3,3,i+1), plt.imshow(images[i], 'gray')
+    plt.title(titles[i])
+    plt.xticks([]) , plt.yticks([])
+
+plt.show()
