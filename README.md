@@ -1,6 +1,4 @@
-I apologize for the oversight. You are right; for a clean copy-paste into a GitHub `README` file, citations and unnecessary formatting should be completely removed.
 
-Here is the absolutely clean, final Markdown content for your `README.md` file, ready to be copied directly:
 
 # Summer Internship & B.Tech Project: Digital Twin for Micro-Plasma Metal Additive Manufacturing (μ-PMAM) 🔬
 
